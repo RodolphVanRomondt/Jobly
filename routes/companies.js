@@ -11,11 +11,12 @@ const Company = require("../models/company");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
+const querySearch = require("../schemas/querySearch.json");
 
 const router = new express.Router();
 
 
-/** POST / { company } =>  { company }
+/* POST / { company } =>  { company }
  *
  * company should be { handle, name, description, numEmployees, logoUrl }
  *
@@ -23,7 +24,6 @@ const router = new express.Router();
  *
  * Authorization required: login
  */
-
 router.post("/", ensureLoggedIn, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, companyNewSchema);
@@ -49,11 +49,29 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  *
  * Authorization required: none
  */
-
 router.get("/", async function (req, res, next) {
   try {
+
+    if (Object.keys(req.query).length) {
+      if (jsonschema.validate(req.query, querySearch).valid) {
+        if (req.query.minEmployees > req.query.maxEmployees) {
+          throw new BadRequestError("minEmployees cannot be greater than maxEmployees");
+        }
+        
+        const companies = await Company.findAndFilter(req.query);
+        return res.json({companies});
+      }
+
+      const er = jsonschema
+        .validate(req.query, querySearch)
+        .errors
+        .map(e => e.stack);
+      throw new BadRequestError(er, 400);
+    }
+
     const companies = await Company.findAll();
     return res.json({ companies });
+
   } catch (err) {
     return next(err);
   }
@@ -86,7 +104,6 @@ router.get("/:handle", async function (req, res, next) {
  *
  * Authorization required: login
  */
-
 router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, companyUpdateSchema);
@@ -102,11 +119,10 @@ router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
   }
 });
 
-/** DELETE /[handle]  =>  { deleted: handle }
+/* DELETE /[handle]  =>  { deleted: handle }
  *
  * Authorization: login
  */
-
 router.delete("/:handle", ensureLoggedIn, async function (req, res, next) {
   try {
     await Company.remove(req.params.handle);

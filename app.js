@@ -14,12 +14,22 @@ const usersRoutes = require("./routes/users");
 
 const morgan = require("morgan");
 
+const { queryParser } = require("express-query-parser");
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);
+app.use(
+  queryParser({
+    parseNull: true,
+    parseUndefined: true,
+    parseBoolean: true,
+    parseNumber: true
+  })
+)
 
 app.use("/auth", authRoutes);
 app.use("/companies", companiesRoutes);

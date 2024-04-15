@@ -2,10 +2,10 @@
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const { sqlForPartialUpdate } = require("../helpers/sql");
+const { validateQuery } = require("../helpers/query");
+
 
 /** Related functions for companies. */
-
 class Company {
   /** Create a company (from data), update db, return new company data.
    *
@@ -47,7 +47,8 @@ class Company {
   /** Find all companies.
    *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
-   * */
+   *
+   */
 
   static async findAll() {
     const companiesRes = await db.query(
@@ -61,6 +62,28 @@ class Company {
     return companiesRes.rows;
   }
 
+  /* Find all companies that are match by name, minEmployees or maxEmployees.
+  *
+  * Returns [{handle, name, description, numEmployees, logoUrl}]
+  * 
+  */
+  static async findAndFilter(data) {
+
+    const { setCols, values } = validateQuery(data);
+
+    const querySql = `SELECT handle,
+                        name,
+                        description,
+                        num_employees AS "numEmployees",
+                        logo_url AS "logoUrl"
+                        FROM companies
+                        WHERE ${setCols}
+                        ORDER BY name`;
+    const results = await db.query(querySql, [...values]);
+
+    return results.rows;
+  }
+
   /** Given a company handle, return data about company.
    *
    * Returns { handle, name, description, numEmployees, logoUrl, jobs }
@@ -68,7 +91,6 @@ class Company {
    *
    * Throws NotFoundError if not found.
    **/
-
   static async get(handle) {
     const companyRes = await db.query(
           `SELECT handle,
@@ -98,7 +120,6 @@ class Company {
    *
    * Throws NotFoundError if not found.
    */
-
   static async update(handle, data) {
     const { setCols, values } = sqlForPartialUpdate(
         data,
