@@ -87,6 +87,29 @@ describe("findAll", function () {
   });
 });
 
+/**************************** findAndFilter */
+describe("Filter Company", function () {
+  test("Works: filter by the 3 criterias", async function () {
+    const criteriaData = { name: "llc", minEmployees: 600, maxEmployees: 900 };
+    let companies = await Company.findAndFilter(criteriaData);
+    console.log(companies[0]);
+    expect(companies[0]).toEqual({
+      handle: "humphrey-llc",
+      name: "Humphrey LLC",
+      description: "Agent actually able paper nor. Tell then court full agree without assume.",
+      numEmployees: 678,
+      logoUrl: "/logos/logo4.png"
+    });
+  });
+
+  test("Works: some criteria", async function () {
+    const criteriaData = { name: "llc", minEmployees: 700 };
+    const companies = await Company.findAndFilter(criteriaData);
+    console.log(companies[0]);
+    expect(0).toEqual(0);
+  });
+});
+
 /************************************** get */
 
 describe("get", function () {

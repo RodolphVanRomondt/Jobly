@@ -108,6 +108,26 @@ describe("GET /companies", function () {
   });
 });
 
+/************************************** GET /companies FILTERED */
+describe("GET FILTERED /companies", function () {
+  test("Gets filtered companies", async function () {
+    const resp = await request(app).get("/companies").query({ "name": "llc", "minEmployees": 700 });
+    expect(resp.statusCode).toEqual(200);
+    console.log(resp.body);
+    expect(resp.body).toEqual({
+      companies: [
+        {
+          "handle": "smith-llc",
+          "name": "Smith LLC",
+          "description": "Statement use per mission method. Order truth method.",
+          "numEmployees": 908,
+          "logoUrl": null
+        }
+      ]
+});
+  });
+});
+
 /************************************** GET /companies/:handle */
 
 describe("GET /companies/:handle", function () {
