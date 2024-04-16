@@ -2,7 +2,8 @@
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const { validateQuery } = require("../helpers/query");
+const validateQuery = require("../helpers/query");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 
 
 /** Related functions for companies. */
@@ -137,6 +138,7 @@ class Company {
                                 description, 
                                 num_employees AS "numEmployees", 
                                 logo_url AS "logoUrl"`;
+    
     const result = await db.query(querySql, [...values, handle]);
     const company = result.rows[0];
 

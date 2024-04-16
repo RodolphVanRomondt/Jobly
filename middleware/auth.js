@@ -32,7 +32,6 @@ function authenticateJWT(req, res, next) {
  * If not, raises Unauthorized.
  */
 function ensureLoggedIn(req, res, next) {
-  console.log(req);
   try {
     if (!res.locals.user) throw new UnauthorizedError();
     return next();
@@ -63,7 +62,6 @@ function ensureAdmin(req, res, next) {
  *  If not, raises Unauthorized.
  */
 function ensureCorrectUserOrAdmin(req, res, next) {
-  console.log(res);
   try {
     const user = res.locals.user;
     if (!(user && (user.isAdmin || user.username === req.params.username))) {

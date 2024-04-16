@@ -36,5 +36,31 @@ function validateQuery(queryObject) {
     };
 }
 
+function jobValidateQuery(queryObject) {
 
-module.exports = { validateQuery };
+    const cols = [];
+    let idx = 0;
+
+    for (let key of Object.keys(queryObject)) {
+        if (key === "minSalary") {
+            idx += 1;
+            cols.push(`salary>=$${idx}`);
+        }
+        else if (key === "hasEquity") {
+            idx += 1;
+            cols.push(`equity > $${idx}`);
+        }
+        else if (key === "title") {
+            cols.push(`title ILIKE '%${queryObject[key]}%'`);
+        }
+    }
+
+    return {
+        setCols: cols.join(" AND "),
+        values: Object.values(queryObject)
+            .filter(ele => ele !== queryObject.title)
+    };
+}
+
+
+module.exports = { validateQuery, jobValidateQuery };

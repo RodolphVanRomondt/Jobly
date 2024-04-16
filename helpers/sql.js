@@ -1,5 +1,6 @@
 const { BadRequestError } = require("../expressError");
 
+
 /*
 * Gets a first argument of object to reformat to another object
 * {school: "Springboard", track: "Software Engineering"}
@@ -20,7 +21,7 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   if (keys.length === 0) throw new BadRequestError("No data");
 
   const cols = keys.map((colName, idx) =>
-      `'${jsToSql[colName] || colName}'=$${idx + 1}`,
+      `${jsToSql[colName] || colName}=$${idx + 1}`,
   );
 
   return {
@@ -30,4 +31,4 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 }
 
 
-module.exports = { sqlForPartialUpdate };
+module.exports = sqlForPartialUpdate;
