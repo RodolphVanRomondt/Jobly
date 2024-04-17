@@ -2,7 +2,7 @@
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const validateQuery = require("../helpers/query");
+const { validateQuery } = require("../helpers/query");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
 

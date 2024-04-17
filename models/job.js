@@ -3,11 +3,12 @@
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const { jobValidateQuery } = require("../helpers/query");
-const sqlForPartialUpdate = require("../helpers/sql");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 
 
 /** Related functions for jobs. */
 class Job {
+
     /** Create a job (from data), update db, return new job data.
      *
      * data should be { id, title, salary, equity, company_handle }
@@ -15,8 +16,7 @@ class Job {
      * Returns { id, title, salary, equity, company_handle }
      *
      * Throws BadRequestError if job already in database.
-     * */
-
+     **/
     static async create({ title, salary, equity, company_handle }) {
         const duplicateCheck = await db.query(
             `SELECT id
@@ -49,7 +49,6 @@ class Job {
      * Returns [{ id, title, salary, equity, company_handle }, ...]
      *
      */
-
     static async findAll() {
         const jobsRes = await db.query(
             `SELECT id,
@@ -62,11 +61,11 @@ class Job {
         return jobsRes.rows;
     }
 
-    /* Find all jobs that are match by title, minSalary and hasEquity
+    /** Find all jobs that are match by title, minSalary and hasEquity
     *
     * Returns [{id, title, salary, equity, company_handle}, ...]
     * 
-    */
+    **/
     static async findAndFilter(data) {
 
         const { setCols, values } = jobValidateQuery(data);

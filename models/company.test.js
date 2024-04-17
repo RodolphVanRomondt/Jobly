@@ -90,23 +90,34 @@ describe("findAll", function () {
 /**************************** findAndFilter */
 describe("Filter Company", function () {
   test("Works: filter by the 3 criterias", async function () {
-    const criteriaData = { name: "llc", minEmployees: 600, maxEmployees: 900 };
+    const criteriaData = { name: "c3", minEmployees: 3, maxEmployees: 3 };
     let companies = await Company.findAndFilter(criteriaData);
-    console.log(companies[0]);
-    expect(companies[0]).toEqual({
-      handle: "humphrey-llc",
-      name: "Humphrey LLC",
-      description: "Agent actually able paper nor. Tell then court full agree without assume.",
-      numEmployees: 678,
-      logoUrl: "/logos/logo4.png"
-    });
+    expect(companies).toEqual([{
+      handle: "c3",
+      name: "C3",
+      description: "Desc3",
+      numEmployees: 3,
+      logoUrl: "http://c3.img"
+    }]);
   });
 
   test("Works: some criteria", async function () {
-    const criteriaData = { name: "llc", minEmployees: 700 };
+    const criteriaData = { "minEmployees": 2 };
     const companies = await Company.findAndFilter(criteriaData);
-    console.log(companies[0]);
-    expect(0).toEqual(0);
+    expect(companies).toEqual([{
+      handle: "c2",
+      name: "C2",
+      description: "Desc2",
+      numEmployees: 2,
+      logoUrl: "http://c2.img",
+    },
+      {
+        handle: "c3",
+        name: "C3",
+        description: "Desc3",
+        numEmployees: 3,
+        logoUrl: "http://c3.img",
+      }]);
   });
 });
 
@@ -121,6 +132,12 @@ describe("get", function () {
       description: "Desc1",
       numEmployees: 1,
       logoUrl: "http://c1.img",
+      jobs: [{
+        id: expect.any(Number),
+        title: 'IT',
+        salary: 100000,
+        equity: "1"
+      }]
     });
   });
 
