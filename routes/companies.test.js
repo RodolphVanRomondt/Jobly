@@ -110,21 +110,67 @@ describe("GET /companies", function () {
 
 /************************************** GET /companies FILTERED */
 describe("GET FILTERED /companies", function () {
-  test("Gets filtered companies", async function () {
-    const resp = await request(app).get("/companies").query({ "name": "llc", "minEmployees": 700 });
+  test("Filters companies by name", async function () {
+    const resp = await request(app).get("/companies").query({ "name": "C1" });
     expect(resp.statusCode).toEqual(200);
     console.log(resp.body);
     expect(resp.body).toEqual({
       companies: [
         {
-          "handle": "smith-llc",
-          "name": "Smith LLC",
-          "description": "Statement use per mission method. Order truth method.",
-          "numEmployees": 908,
-          "logoUrl": null
+          handle: "c1",
+          name: "C1",
+          numEmployees: 1,
+          description: "Desc1",
+          logoUrl: "http://c1.img",
+        }
+      ]});
+  });
+
+  test("Filters companies by minEmployees", async function () {
+    const resp = await request(app).get("/companies").query({ minEmployees: 2 });
+    expect(resp.statusCode).toEqual(200);
+    console.log(resp.body);
+    expect(resp.body).toEqual({
+      companies: [
+        {
+          handle: "c2",
+          name: "C2",
+          numEmployees: 2,
+          description: "Desc2",
+          logoUrl: "http://c2.img",
+        },
+        {
+          handle: "c3",
+          name: "C3",
+          numEmployees: 3,
+          description: "Desc3",
+          logoUrl: "http://c3.img",
+        }
+      ]});
+  });
+
+  test("Filters companies by multiple criterias", async function () {
+    const resp = await request(app).get("/companies").query({ name: "c", minEmployees: 2 });
+    expect(resp.statusCode).toEqual(200);
+    console.log(resp.body);
+    expect(resp.body).toEqual({
+      companies: [
+        {
+          handle: "c2",
+          name: "C2",
+          numEmployees: 2,
+          description: "Desc2",
+          logoUrl: "http://c2.img",
+        },
+        {
+          handle: "c3",
+          name: "C3",
+          numEmployees: 3,
+          description: "Desc3",
+          logoUrl: "http://c3.img",
         }
       ]
-});
+    });
   });
 });
 
@@ -140,6 +186,19 @@ describe("GET /companies/:handle", function () {
         description: "Desc1",
         numEmployees: 1,
         logoUrl: "http://c1.img",
+        jobs: [
+          {
+            id: expect.any(Number),
+            title: 'IT',
+            salary: 100000,
+            equity: "1"
+          },
+          {
+            id: expect.any(Number),
+            title: 'SE',
+            salary: 150000,
+            equity: "0"
+          }]
       },
     });
   });
@@ -153,6 +212,7 @@ describe("GET /companies/:handle", function () {
         description: "Desc2",
         numEmployees: 2,
         logoUrl: "http://c2.img",
+        jobs: []
       },
     });
   });

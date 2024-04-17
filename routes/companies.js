@@ -57,6 +57,8 @@ router.get("/", async function (req, res, next) {
         if (req.query.minEmployees > req.query.maxEmployees) {
           throw new BadRequestError("minEmployees cannot be greater than maxEmployees");
         }
+
+        console.log(req.query);
         
         const companies = await Company.findAndFilter(req.query);
         return res.json({companies});
